@@ -22,21 +22,15 @@ raw_data_no_s['sat_math_avg_score'] = raw_data_no_s['sat_math_avg_score'].astype
 raw_data_no_s['sat_critical_reading_avg_score'] = raw_data_no_s['sat_critical_reading_avg_score'].astype(int)
 raw_data_no_s['sat_writing_avg_score'] = raw_data_no_s['sat_writing_avg_score'].astype(int)
 
-# need to create a new column in the dataframe and then populate it with the average of the three sat scores
+# creates a new column in the dataframe and then populate it with the average of the three sat scores
 
 raw_data_no_s['overall_average_score'] = (raw_data_no_s.sat_writing_avg_score + raw_data_no_s.sat_critical_reading_avg_score + raw_data_no_s.sat_math_avg_score) / 3
 
-
-#attempting to create a user input prompt to indicate if they want highest or lowest and how many to show
-#appears to be working
-
-#see if i can have this now give you the rankings by user selected sort order, list size, AND specific score to be sorting 
-
-# build in forced conversion to "lower" for user input to minimze errors
+# user input prompted to indicate which score they want to sort by, if they want highest or lowest scoring schools, and how many to show
 
 #added in print lines in attmpt to make the input prompts easier to see
 print ""
-search_target = raw_input("What specific sat score are you looking to rank schools by? (math, writing, critical reading, overall)")
+search_target = raw_input("What specific sat score are you looking to rank schools by? (math, writing, critical reading, overall) ")
 print ""
 search_type = raw_input("Are you looking for the best schools or the worst? ")
 print ""
@@ -48,33 +42,39 @@ def search_function(s_type, s_target):
   stop_trigger_1 = True
   stop_trigger_2 = True
   
-  #creating an if statement that will translate s_target into the correct sorting column based on user input
+  s_type_lower = s_type.lower()
+  s_target_lower = s_target.lower()
+  
+  # creating an if statement that will translate s_target into the correct sorting column based on user input
+  
+  # fix the invalid response so that it communicates what needs to be changed
   
   while stop_trigger_1 == True:
-    if s_target == "math":
+    if s_target_lower == "math":
       s_target_input = "sat_math_avg_score"
       stop_trigger_1 = False
-    elif s_target == "writing":
+    elif s_target_lower == "writing":
       s_target_input = "sat_writing_avg_score"
       stop_trigger_1 = False
-    elif s_target == "critical reading":
+    elif s_target_lower == "critical reading":
       s_target_input = "sat_critical_reading_avg_score"
       stop_trigger_1 = False
-    elif s_target == "overall":
+    elif s_target_lower == "overall":
       s_target_input = "overall_average_score"
       stop_trigger_1 = False
     else:
       print "Invalid Option"
       s_target = raw_input("What specific sat score are you looking to rank schools by? (math, writing, critical reading, overall)")
       
-  #changed the sort value from "overall_average_score" to the value of the s_target_input variable
+  # changed the sort value from "overall_average_score" to the value of the s_target_input variable
+  
   while stop_trigger_2 == True:
-    if s_type == "best":
+    if s_type_lower == "best":
       sorted_raw_data_no_s = raw_data_no_s.sort_values(s_target_input, ascending=False) 
       print sorted_raw_data_no_s[['school_name', s_target_input]][:int(search_size)]
       stop_trigger_2 = False
       return stop_trigger_2
-    elif s_type == "worst":
+    elif s_type_lower == "worst":
       sorted_raw_data_no_s = raw_data_no_s.sort_values(s_target_input, ascending=True) 
       print sorted_raw_data_no_s[['school_name', s_target_input]][:int(search_size)]
       stop_trigger_2 == False
