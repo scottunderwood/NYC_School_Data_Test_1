@@ -21,6 +21,12 @@ raw_data_no_s['sat_writing_avg_score'] = raw_data_no_s['sat_writing_avg_score'].
 # creates a new column in the dataframe and then populate it with the average of the three sat scores
 raw_data_no_s['overall_average_score'] = (raw_data_no_s.sat_writing_avg_score + raw_data_no_s.sat_critical_reading_avg_score + raw_data_no_s.sat_math_avg_score) / 3
 
+# a title for the tool to appear before the user prompts
+print ""
+print ""
+print "New York City Schools Sorted by Average SAT Scores"
+print ""
+
 
 # user input prompted to indicate which score they want to sort by, if they want highest or lowest scoring schools, and how many to show
 # breaking out lines printed in the console further so that they are easier to interact with
@@ -63,6 +69,7 @@ def search_function(s_type, s_target):
       s_target_input = "overall_average_score"
       stop_trigger_1 = False
     else:
+      print ""
       print "Invalid Option"
       s_target_lower = raw_input("What specific sat score are you looking to rank schools by? (math, writing, critical reading, overall)")
   
@@ -81,6 +88,7 @@ def search_function(s_type, s_target):
       stop_trigger_2 == False
       return stop_trigger_2
     else:
+      print ""
       print "Invalid Option"
       s_type_lower = raw_input("Are you looking for the best schools or the worst?")
       
