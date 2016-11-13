@@ -5,13 +5,12 @@ import urllib
 
 
 # source data: https://data.cityofnewyork.us/Education/SAT-Results/f9bf-2cp4
-query = ("https://data.cityofnewyork.us/resource/734v-jeq5.json?")
-raw_data = pd.read_json(query)
+# query removes all of the rows where no test takes produced a value of 's', enables later code to change score column datatypes to int
+query = ("https://data.cityofnewyork.us/resource/734v-jeq5.json?"
+         "$where=num_of_sat_test_takers!='s'")
+raw_data_no_s = pd.read_json(query)
 
-
-# removes all of the rows where no test takes produced a value of 's' in the score columns which prevented my from changing the column type to int
-raw_data_no_s = raw_data[raw_data.num_of_sat_test_takers != 's']  
-
+# NEED - want to change the column headers to something more readable
 
 # these change the datatype in all of the score columns to int so that I can run calculations off of them  
 raw_data_no_s['sat_math_avg_score'] = raw_data_no_s['sat_math_avg_score'].astype(int)
@@ -36,8 +35,6 @@ print "How long a list do you need? "
 search_size = raw_input("Response: ")
 
 # NEED - create a function that tests search_size input to make sure its just a number
-
-# NEED - need to figure out how to fix the error message that python is returning when i run the program
 
 # a function that prints list of schools based on user input search parameters
 def search_function(s_type, s_target):
