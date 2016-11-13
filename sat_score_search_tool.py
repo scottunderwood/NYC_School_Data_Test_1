@@ -70,8 +70,8 @@ def search_function(s_type, s_target):
       stop_trigger_1 = False
     else:
       print ""
-      print "Invalid Option"
-      s_target_lower = raw_input("What specific sat score are you looking to rank schools by? (math, writing, critical reading, overall)")
+      print "Invalid Option. What specific sat score are you looking to rank schools by? (math, writing, critical reading, overall)"
+      s_target_lower = raw_input("Response: ")
   
   # an if statement that sorts scores high-low or low-high based on user input, also ensures that sort is also run on the right column of scores
   # changed the sort value from "overall_average_score" to the value of the s_target_input variable 
@@ -89,8 +89,8 @@ def search_function(s_type, s_target):
       return stop_trigger_2
     else:
       print ""
-      print "Invalid Option"
-      s_type_lower = raw_input("Are you looking for the best schools or the worst?")
+      print "Invalid Option. Are you looking for the best schools or the worst?"
+      s_type_lower = raw_input("Response: ")
       
       
 search_function(search_type,search_target)
