@@ -3,6 +3,7 @@ import pandas as pd
 import datetime
 import urllib
 
+# NEED - pull in second directory datafile https://data.cityofnewyork.us/Education/DOE-High-School-Directory-2014-2015/n3p6-zve2
 
 # source data: https://data.cityofnewyork.us/Education/SAT-Results/f9bf-2cp4
 # query removes all of the rows where a school did not report scores, enables later code to change score column datatypes from str to int
