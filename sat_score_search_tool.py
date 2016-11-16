@@ -3,26 +3,38 @@ import pandas as pd
 import datetime
 import urllib
 
-# NEED - pull in second directory datafile https://data.cityofnewyork.us/Education/DOE-High-School-Directory-2014-2015/n3p6-zve2
 
 # source data: https://data.cityofnewyork.us/Education/SAT-Results/f9bf-2cp4
 # query removes all of the rows where a school did not report scores, enables later code to change score column datatypes from str to int
-query = ("https://data.cityofnewyork.us/resource/734v-jeq5.json?"
+query_1 = ("https://data.cityofnewyork.us/resource/734v-jeq5.json?"
          "$where=num_of_sat_test_takers!='s'")
-raw_data_no_s = pd.read_json(query)
+raw_score_data_no_s = pd.read_json(query_1)
 
+# NEED - pull in second directory datafile https://data.cityofnewyork.us/Education/DOE-High-School-Directory-2014-2015/n3p6-zve2
+# NEED - find a way to improve the response time on this second pull by filtering out the irrelivant data
+# This now is attempt to pull in second directory dataset
+query_2 = ("https://data.cityofnewyork.us/resource/2u2u-zka4.json?")
+raw_directory_data = pd.read_json(query_2)
 
 # NEED - want to change the column headers to something more readable
 
 
 # these change the datatype in all of the score columns to int so that I can run calculations off of them  
-raw_data_no_s['sat_math_avg_score'] = raw_data_no_s['sat_math_avg_score'].astype(int)
-raw_data_no_s['sat_critical_reading_avg_score'] = raw_data_no_s['sat_critical_reading_avg_score'].astype(int)
-raw_data_no_s['sat_writing_avg_score'] = raw_data_no_s['sat_writing_avg_score'].astype(int)
-
+raw_score_data_no_s['sat_math_avg_score'] = raw_score_data_no_s['sat_math_avg_score'].astype(int)
+raw_score_data_no_s['sat_critical_reading_avg_score'] = raw_score_data_no_s['sat_critical_reading_avg_score'].astype(int)
+raw_score_data_no_s['sat_writing_avg_score'] = raw_score_data_no_s['sat_writing_avg_score'].astype(int)
 
 # creates a new column in the dataframe and then populate it with the average of the three sat scores
-raw_data_no_s['overall_average_score'] = (raw_data_no_s.sat_writing_avg_score + raw_data_no_s.sat_critical_reading_avg_score + raw_data_no_s.sat_math_avg_score) / 3
+raw_score_data_no_s['overall_average_score'] = (raw_score_data_no_s.sat_writing_avg_score + raw_score_data_no_s.sat_critical_reading_avg_score + raw_score_data_no_s.sat_math_avg_score) / 3
+
+
+# normalizes the values in the school_name column of both dataframes so that they are uniformly lowercase 
+raw_score_data_no_s['school_name'] = map(lambda x: x.lower(), raw_score_data_no_s['school_name'])
+raw_directory_data['school_name'] = map(lambda x: x.lower(), raw_directory_data['school_name'])
+
+
+# merges the raw score data with the raw directory data on the school_name column to produce a single new dataframe
+combined_data = pd.merge(raw_directory_data, raw_score_data_no_s, on='school_name', how='inner')
 
 
 # a title for the tool to appear before the user prompts
@@ -46,6 +58,9 @@ search_size = raw_input("Response: ")
 
 
 # NEED - create a function that tests search_size input to make sure its just a number
+
+# NEED - want to add another prompt that gives you a menu of additonal datapoints to include in the printout
+# NEED - will require printing a menu of options, validation, and then input into the print function
 
 
 # a function that prints list of schools based on user input search parameters
@@ -82,13 +97,16 @@ def search_function(s_type, s_target):
   # NEED - break search target validation out into its own function, move to immediately after the first prompt
   while stop_trigger_2 == True:
     if s_type_lower == "best":
-      sorted_raw_data_no_s = raw_data_no_s.sort_values(s_target_input, ascending=False) 
-      print sorted_raw_data_no_s[['school_name', s_target_input]][:int(search_size)]
+      # changing all subsequent dataframe names to reflect the new merged dataframe
+      sorted_combined_data = combined_data.sort_values(s_target_input, ascending=False) 
+      # adding in third output column 'boro' to test the merge
+      print sorted_combined_data[['school_name','boro', s_target_input]][:int(search_size)]
       stop_trigger_2 = False
       return stop_trigger_2
     elif s_type_lower == "worst":
-      sorted_raw_data_no_s = raw_data_no_s.sort_values(s_target_input, ascending=True) 
-      print sorted_raw_data_no_s[['school_name', s_target_input]][:int(search_size)]
+      sorted_combined_data = combined_data.sort_values(s_target_input, ascending=True) 
+      # adding in third output column 'boro' to test the merge
+      print sorted_combined_data[['school_name', 'boro', s_target_input]][:int(search_size)]
       stop_trigger_2 == False
       return stop_trigger_2
     else:
